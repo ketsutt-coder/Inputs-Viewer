@@ -12,16 +12,19 @@ SettingEventType IVSettingEvent::getType() const noexcept {
 }
 
 IVSettingFilter::IVSettingFilter()
-    : m_type() {}
+    : m_type(std::nullopt) {}
 
 IVSettingFilter::IVSettingFilter(std::nullopt_t) : IVSettingFilter() {}
 
 IVSettingFilter::IVSettingFilter(SettingEventType type)
     : m_type(type) {}
 
-ListenerResult IVSettingFilter::handle(std::function<IVSettingFilter::Callback> fn, IVSettingEvent* event) {
+// CORRECCIÓN V5: Adiós std::function.
+ListenerResult IVSettingFilter::handle(geode::utils::MiniFunction<Callback> fn, IVSettingEvent* event) {
+    // Evaluamos si el tipo coincide
     if (m_type && m_type.value() != event->getType()) return ListenerResult::Propagate;
 
+    // Ejecutamos la función
     fn(event->getType());
     return ListenerResult::Propagate;
 }
