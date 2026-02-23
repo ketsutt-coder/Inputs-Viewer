@@ -1,19 +1,19 @@
 #pragma once
 
 #include <Geode/Geode.hpp>
-#include <Geode/loader/Event.hpp>
 
 using namespace geode::prelude;
 
 GEODE_NS_IV_BEGIN
 
-// Asumo que tienes un enum como este para tus tipos de evento, si no, mantén el tuyo.
+// Mantén tu enum si lo tienes definido aquí o en otro lado
 enum class SettingEventType {
     Unknown,
     // ...
 };
 
-class IVSettingEvent : public geode::Event {
+// Ya no hereda de geode::Event
+class IVSettingEvent {
 protected:
     SettingEventType m_type;
 public:
@@ -21,20 +21,21 @@ public:
     SettingEventType getType() const noexcept;
 };
 
-// En Event V2, tu filtro OBLIGATORIAMENTE debe heredar de geode::EventFilter
-class IVSettingFilter : public geode::EventFilter<IVSettingEvent> {
+// Ya no hereda de geode::EventFilter
+class IVSettingFilter {
 protected:
     std::optional<SettingEventType> m_type;
 public:
-    // Geode necesita saber cuál es la firma de tu Callback
+    // Firmas obligatorias para que el EventListener de Geode lo reconozca
     using Callback = void(SettingEventType);
+    using Event = IVSettingEvent; 
 
     IVSettingFilter();
     IVSettingFilter(std::nullopt_t);
     IVSettingFilter(SettingEventType type);
 
-    // CORRECCIÓN GEODE V5: La firma estándar para el EventSystem V2
-    ListenerResult handle(geode::utils::MiniFunction<Callback> fn, IVSettingEvent* event);
+    // CORRECCIÓN: Usamos utils::Function en lugar de MiniFunction
+    ListenerResult handle(geode::utils::Function<Callback> fn, IVSettingEvent* event);
 };
 
 GEODE_NS_IV_END
