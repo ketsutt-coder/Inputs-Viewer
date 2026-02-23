@@ -1,31 +1,17 @@
 #pragma once
 
-GEODE_NS_IV_BEGIN
+#include <Geode/Geode.hpp>
+// IMPORTANTE: En Geode v5, para usar Eventos y Filtros, 
+// a veces necesitamos este header específico:
+#include <Geode/loader/Event.hpp>
 
-enum class SettingEventType {
-    Color,
-    KeyAppearance,
-    RefreshView,
-};
+using namespace geode::prelude;
+
+// ... el resto de tu código ...
 
 class IVSettingEvent : public geode::Event {
 public:
-    IVSettingEvent(SettingEventType type);
-    SettingEventType getType() const noexcept;
-protected:
-    SettingEventType m_type;
+    // ...
 };
 
-class IVSettingFilter : public geode::EventFilter<IVSettingEvent> {
-public:
-    IVSettingFilter();
-    IVSettingFilter(std::nullopt_t);
-    IVSettingFilter(SettingEventType type);
-public:
-    using Callback = void(SettingEventType);
-    geode::ListenerResult handle(std::function<Callback> func, IVSettingEvent* event);
-protected:
-    std::optional<SettingEventType> m_type;
-};
-
-GEODE_NS_IV_END
+// ...
