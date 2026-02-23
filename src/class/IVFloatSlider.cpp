@@ -23,7 +23,6 @@ bool FloatSlider::init(char const* text, float defaultValue, float min, float ma
 
     m_slider = Slider::create(this, menu_selector(FloatSlider::onSlider), 0.5f);
     
-    // CORRECCIÓN: El miembro correcto en Geode es m_sliderBar
     // Lo ocultamos para que solo se vea el thumb (o según tu diseño)
     if (m_slider && m_slider->m_sliderBar) {
         m_slider->m_sliderBar->setVisible(false);
@@ -86,10 +85,10 @@ void FloatSlider::onSlider(CCObject*) {
 void FloatSlider::onTextInput(std::string const& string) {
     auto res = numFromString<float>(string);
     
-    // CORRECCIÓN GEODE v5: El manejo de Result ha cambiado
-    // Ahora se comprueba directamente o con .has_value()
+    // Comprobamos si la conversión fue exitosa
     if (res) {
-        float num = res.value(); // .ok() ya no existe, usamos .value()
+        // CORRECCIÓN: Usamos .unwrap() en lugar de .value()
+        float num = res.unwrap(); 
         
         if (num < m_minValue) {
             num = m_minValue;
