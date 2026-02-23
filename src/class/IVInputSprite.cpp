@@ -26,7 +26,7 @@ InputSprite::InputSprite()
         using SettingType = SettingTypeForValueType<std::string>::SettingType;
         this->setCPSMode(convertCPSCalculation(std::static_pointer_cast<SettingType>(setting)->getValue()));
     },
-    SettingChangedFilterV3(Mod::get()->getID(), "cps-calculation"))
+    geode::SettingChangedEventV3(Mod::get()->getID(), "cps-calculation"))
 {}
 
 InputSprite* InputSprite::create(PlayerInputNode* inputNode, PlayerButton button, char const* playerText) {
