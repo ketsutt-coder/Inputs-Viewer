@@ -6,13 +6,14 @@ using namespace geode::prelude;
 
 GEODE_NS_IV_BEGIN
 
-// Mantén tu enum si lo tienes definido aquí o en otro lado
+// Aquí está tu Enum asegurado con RefreshView
 enum class SettingEventType {
     Unknown,
-    // ...
+    RefreshView, 
+    // Si tenías otros estados (como UpdateColor, etc), escríbelos aquí abajo:
+    
 };
 
-// Ya no hereda de geode::Event
 class IVSettingEvent {
 protected:
     SettingEventType m_type;
@@ -21,12 +22,10 @@ public:
     SettingEventType getType() const noexcept;
 };
 
-// Ya no hereda de geode::EventFilter
 class IVSettingFilter {
 protected:
     std::optional<SettingEventType> m_type;
 public:
-    // Firmas obligatorias para que el EventListener de Geode lo reconozca
     using Callback = void(SettingEventType);
     using Event = IVSettingEvent; 
 
@@ -34,8 +33,8 @@ public:
     IVSettingFilter(std::nullopt_t);
     IVSettingFilter(SettingEventType type);
 
-    // CORRECCIÓN: Usamos utils::Function en lugar de MiniFunction
-    ListenerResult handle(geode::utils::Function<Callback> fn, IVSettingEvent* event);
+    // CORRECCIÓN ASEGURADA: Solo geode::Function
+    ListenerResult handle(geode::Function<Callback> fn, IVSettingEvent* event);
 };
 
 GEODE_NS_IV_END
