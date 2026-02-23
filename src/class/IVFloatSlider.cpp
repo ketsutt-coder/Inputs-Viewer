@@ -15,19 +15,18 @@ FloatSlider* FloatSlider::create(char const* text, float defaultValue, float min
 }
 
 bool FloatSlider::init(char const* text, float defaultValue, float min, float max, std::function<Callback>&& callback) {
-    if (!CCNode::init()) return false; // Siempre inicializar la clase base
+    if (!CCNode::init()) return false;
 
     m_callback = std::move(callback);
     m_minValue = min;
     m_maxValue = max;
 
-    // Crear el slider usando la UI de Geode
     m_slider = Slider::create(this, menu_selector(FloatSlider::onSlider), 0.5f);
     
-    // FIX v5: m_sliderBar ya no es accesible directamente o cambió de nombre
-    // Usamos el método seguro de Geode para ocultar el fondo si es necesario
-    if (m_slider->m_backgroundSprite) {
-        m_slider->m_backgroundSprite->setVisible(false);
+    // CORRECCIÓN: El miembro correcto en Geode es m_sliderBar
+    // Lo ocultamos para que solo se vea el thumb (o según tu diseño)
+    if (m_slider && m_slider->m_sliderBar) {
+        m_slider->m_sliderBar->setVisible(false);
     }
     this->addChild(m_slider);
 
@@ -35,7 +34,6 @@ bool FloatSlider::init(char const* text, float defaultValue, float min, float ma
     m_textInput->setPosition(26.f, 16.f);
     m_textInput->setCommonFilter(CommonFilter::Float);
     m_textInput->setScale(0.65f);
-    // Usamos una lambda más limpia para el callback
     m_textInput->setCallback([this](std::string const& str) {
         this->onTextInput(str);
     });
@@ -67,7 +65,7 @@ void FloatSlider::setValueInternal(float value, bool triggerCallback) {
 }
 
 float FloatSlider::getValue() const {
-    // FIX v5: Acceso directo al valor del slider
+    // Obtenemos el valor actual del thumb del slider
     return this->sliderValueToRangeValue(m_slider->getValue());
 }
 
@@ -87,9 +85,12 @@ void FloatSlider::onSlider(CCObject*) {
 
 void FloatSlider::onTextInput(std::string const& string) {
     auto res = numFromString<float>(string);
-    // FIX v5: El manejo de Result ha cambiado
+    
+    // CORRECCIÓN GEODE v5: El manejo de Result ha cambiado
+    // Ahora se comprueba directamente o con .has_value()
     if (res) {
-        float num = res.unwrap();
+        float num = res.value(); // .ok() ya no existe, usamos .value()
+        
         if (num < m_minValue) {
             num = m_minValue;
             m_textInput->setString(numToString(m_minValue));
