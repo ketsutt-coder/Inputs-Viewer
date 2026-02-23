@@ -9,7 +9,10 @@ GEODE_NS_IV_BEGIN
 // Aquí está tu Enum asegurado con RefreshView
 enum class SettingEventType {
     Unknown,
-    RefreshView, 
+    RefreshView,
+    Color,
+    KeyAppearance
+};
     // Si tenías otros estados (como UpdateColor, etc), escríbelos aquí abajo:
     
 };
